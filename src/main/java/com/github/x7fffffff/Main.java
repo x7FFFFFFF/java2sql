@@ -14,7 +14,9 @@ public class Main {
 
         try (final InputStream is = Main.class.getClassLoader().getResourceAsStream("Test.java")) {
             final CompilationUnit cu = StaticJavaParser.parse(is);
-            final JavaVisitor prettyPrintVisitor = new JavaVisitor(new PrettyPrinterConfiguration(), new SQLPSQMDialect());
+            final PrettyPrinterConfiguration configuration = new PrettyPrinterConfiguration();
+            final SourcePrinter sourcePrinter = new SourcePrinter(configuration);
+            final JavaVisitor prettyPrintVisitor = new JavaVisitor(sourcePrinter, configuration, new SQLPSQMDialect(configuration));
             cu.accept(prettyPrintVisitor, null);
             System.out.println(prettyPrintVisitor.toString());
 

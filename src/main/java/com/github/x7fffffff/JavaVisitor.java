@@ -30,10 +30,10 @@ public class JavaVisitor implements VoidVisitor<Void> {
     private final SQLPSQMDialect dialect;
     protected final SourcePrinter printer;
 
-    public JavaVisitor(PrettyPrinterConfiguration prettyPrinterConfiguration, SQLPSQMDialect dialect) {
+    public JavaVisitor(SourcePrinter sourcePrinter, PrettyPrinterConfiguration prettyPrinterConfiguration, SQLPSQMDialect dialect) {
         configuration = prettyPrinterConfiguration;
         this.dialect = dialect;
-        printer = new SourcePrinter(configuration);
+        printer = sourcePrinter;
     }
 
     /**
@@ -906,16 +906,7 @@ public class JavaVisitor implements VoidVisitor<Void> {
         final String methodName = n.getName().asString();
 
         printer.print(dialect.functionSignatureBegin(methodName));
-        /*printer.print(" ");
-        n.getName().accept(this, arg);
 
-        printer.print("(");
-        n.getReceiverParameter().ifPresent(rp -> {
-            rp.accept(this, arg);
-            if (!isNullOrEmpty(n.getParameters())) {
-                printer.print(", ");
-            }
-        });*/
         if (!isNullOrEmpty(n.getParameters())) {
             for (final Iterator<Parameter> i = n.getParameters().iterator(); i.hasNext(); ) {
                 final Parameter p = i.next();
@@ -926,11 +917,13 @@ public class JavaVisitor implements VoidVisitor<Void> {
                 }
             }
         }
-        printer.print(dialect.functionSignatureEnd(returnType));
+        printer.println(dialect.functionSignatureEnd(returnType));
         Map<String,String> localVars = getLocalVars( n.getBody().get(), arg);
         if (!localVars.isEmpty()) {
-            printer.println();
-            printer.print(dialect.declareBlock(localVars));
+            printer.println(dialect.declareBlockBegin());
+            printer.indent();
+            localVars.forEach((name, type) -> printer.println(dialect.paramTemplate(name, type) + dialect.expressionDelim()));
+            printer.unindent();
         }
 
         n.getBody().get().accept(this, arg);
@@ -1039,6 +1032,7 @@ public class JavaVisitor implements VoidVisitor<Void> {
         printOrphanCommentsBeforeThisChildNode(n);
         printComment(n.getComment(), arg);
         printer.println(dialect.beginBlock());
+        printer.indent();
         if (n.getStatements() != null) {
             printer.indent();
             for (final Statement s : n.getStatements()) {
@@ -1048,6 +1042,7 @@ public class JavaVisitor implements VoidVisitor<Void> {
             printer.unindent();
         }
         printOrphanCommentsEnding(n);
+        printer.unindent();
         printer.print(dialect.endBlock());
     }
 

@@ -1,5 +1,7 @@
 package com.github.x7fffffff;
 
+import com.github.javaparser.printer.PrettyPrinterConfiguration;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,9 +15,13 @@ public class SQLPSQMDialect {
         convMap.put("Integer", "int");
     }
 
-    String lineDelim() {
-        return "\r\n";
+    private final PrettyPrinterConfiguration configuration;
+
+    public SQLPSQMDialect(PrettyPrinterConfiguration configuration) {
+
+        this.configuration = configuration;
     }
+
 
     String paramsDelim() {
         return ", ";
@@ -26,10 +32,7 @@ public class SQLPSQMDialect {
     }
 
     String functionSignatureBegin(String name) {
-        return "CREATE FUNCTION " + name + "("; //+ parameterList + ") RETURNS " + returnType + lineDelim() +
-        //"BEGIN" + lineDelim();
-              /*  + body + lineDelim()
-                + "END" + lineDelim();*/
+        return "CREATE FUNCTION " + name + "(";
     }
 
     String functionSignatureEnd(String returnType) {
@@ -53,26 +56,13 @@ public class SQLPSQMDialect {
         return "END";
     }
 
-    public String declareBlock(Map<String, String> localVars) {
-        final StringBuilder declare = new StringBuilder("DECLARE").append(lineDelim());
-        localVars.forEach((name, type) -> {
-            declare.append(paramTemplate(name, type)).append(expressionDelim()).append(lineDelim());
-        });
-        return declare.toString();
+
+    public String declareBlockBegin() {
+        return "DECLARE";
     }
 
-    public class ParamListBuilder {
-        final List<String> params = new ArrayList<>();
 
-        public ParamListBuilder add(String name, String javaType) {
-            params.add(paramTemplate(name, javaType));
-            return this;
-        }
 
-        public String build() {
-            return String.join(paramsDelim(), params);
-        }
-    }
 
 
 }
