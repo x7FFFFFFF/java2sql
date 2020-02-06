@@ -62,7 +62,7 @@ public class SQLPSQMDialect {
     }
 
 
-
-
-
+    public String functionCall() {
+        return "Call ";
+    }
 }

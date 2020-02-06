@@ -800,7 +800,8 @@ public class JavaVisitor implements VoidVisitor<Void> {
             printer.print(".");
         });
 
-        printTypeArgs(n, arg);
+        //printTypeArgs(n, arg);
+        printer.print(dialect.functionCall());
         n.getName().accept(this, arg);
         printer.duplicateIndent();
         printArguments(n.getArguments(), arg);
