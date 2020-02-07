@@ -26,9 +26,10 @@ import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.joining;
 
 public class JavaVisitor implements VoidVisitor<Void> {
-    protected final PrettyPrinterConfiguration configuration;
+    private final PrettyPrinterConfiguration configuration;
     private final SQLPSQMDialect dialect;
-    protected final SourcePrinter printer;
+    private final SourcePrinter printer;
+
 
     public JavaVisitor(SourcePrinter sourcePrinter, PrettyPrinterConfiguration prettyPrinterConfiguration, SQLPSQMDialect dialect) {
         configuration = prettyPrinterConfiguration;

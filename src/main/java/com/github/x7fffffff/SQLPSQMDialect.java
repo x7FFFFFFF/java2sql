@@ -61,6 +61,10 @@ public class SQLPSQMDialect {
         return "DECLARE";
     }
 
+    public boolean hasDeclareBlock(){
+        return false;
+    }
+
 
     public String functionCall() {
         return "Call ";

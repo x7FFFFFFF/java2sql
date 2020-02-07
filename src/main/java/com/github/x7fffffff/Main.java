@@ -13,16 +13,21 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         try (final InputStream is = Main.class.getClassLoader().getResourceAsStream("Test.java")) {
-            final CompilationUnit cu = StaticJavaParser.parse(is);
-            final PrettyPrinterConfiguration configuration = new PrettyPrinterConfiguration();
-            final SourcePrinter sourcePrinter = new SourcePrinter(configuration);
-            final JavaVisitor prettyPrintVisitor = new JavaVisitor(sourcePrinter, configuration, new SQLPSQMDialect(configuration));
-            cu.accept(prettyPrintVisitor, null);
+            final JavaVisitor prettyPrintVisitor = getPSMCode(is);
             System.out.println(prettyPrintVisitor.toString());
 
 
         }
 
+    }
+
+    public static JavaVisitor getPSMCode(InputStream is) {
+        final CompilationUnit cu = StaticJavaParser.parse(is);
+        final PrettyPrinterConfiguration configuration = new PrettyPrinterConfiguration();
+        final SourcePrinter sourcePrinter = new SourcePrinter(configuration);
+        final JavaVisitor prettyPrintVisitor = new JavaVisitor(sourcePrinter, configuration, new SQLPSQMDialect(configuration));
+        cu.accept(prettyPrintVisitor, null);
+        return prettyPrintVisitor;
     }
 
 
