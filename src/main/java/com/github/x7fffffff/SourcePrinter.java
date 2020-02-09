@@ -253,4 +253,20 @@ public class SourcePrinter {
     public void duplicateIndent() {
         indents.push(indents.peek());
     }
+
+    public void reset() {
+        lastPrintedIndent = "";
+        buf.setLength(0);
+        cursor = new Position(1, 0);
+        indented = false;
+    }
+
+    public int getPosition(){
+        return buf.length();
+    }
+
+    public String getLast(int index){
+        return buf.substring(index);
+    }
+
 }

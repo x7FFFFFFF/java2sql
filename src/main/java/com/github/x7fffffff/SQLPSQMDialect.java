@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SQLPSQMDialect {
     private static final Map<String, String> convMap = new HashMap<>();
@@ -44,8 +45,8 @@ public class SQLPSQMDialect {
         return convMap.get(javaType);
     }
 
-    String paramTemplate(String name, String javaType) {
-        return name + " " + convertFromJavaType(javaType);
+    String paramTemplate(String name, String dialectType) {
+        return name + " " + dialectType;
     }
 
     public String beginBlock() {
@@ -61,12 +62,17 @@ public class SQLPSQMDialect {
         return "DECLARE";
     }
 
-    public boolean hasDeclareBlock(){
+    public boolean hasDeclareBlock() {
         return false;
     }
 
 
     public String functionCall() {
         return "Call ";
+    }
+
+    public Map<String, String> convertTypes(Map<String, String> localVars) {
+        return localVars.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e->convMap.get(e.getValue())));
+
     }
 }
